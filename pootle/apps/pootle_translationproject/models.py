@@ -473,13 +473,13 @@ class TranslationProject(models.Model):
             # and replace with working copy
             logging.error(u"Near fatal catastrophe, exception %s while "
                           u"updating %s from version control",
-                          e, store.file.name)
+                          e, filetoupdate)
             working_copy.save()
 
             raise VersionControlError
 
         try:
-            hooks.hook(self.project.code, "postupdate", store.file.name)
+            hooks.hook(self.project.code, "postupdate", filetoupdate)
         except:
             pass
 
