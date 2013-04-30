@@ -37,6 +37,7 @@ Online translation editor
    shortcuts
    suggestions
    terminology
+   actions
 
 
 .. _features#admin:
