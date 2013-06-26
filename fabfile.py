@@ -228,6 +228,9 @@ def drop_db():
     """Drops the current DB - losing all data!"""
     require('environment', provided_by=[production, staging])
 
+    # root DB user escalation is specifically NOT enabled here - too risky
+    # If you really want to live dangerously, use SETTINGS['db_user'] = 'root'
+
     if confirm('\nDropping the %s DB loses ALL its data! Are you sure?'
                % (env['db_name']), default=False):
         run("echo 'DROP DATABASE `%s`' | mysql -u %s %s" %
