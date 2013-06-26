@@ -67,11 +67,14 @@ def staging(new_settings={}):
 def _remove_directories():
     """Removes initial directories"""
     if exists('%(project_path)s' % env):
-        sudo('rm -rf %(project_path)s' % env)
+        run('rm -rf "%(project_path)s" || true' % env)
+        sudo('rmdir "%(project_path)s"' % env)
     if exists('%(translations_path)s' % env):
-        sudo('rm -rf %(translations_path)s' % env)
+        run('rm -rf "%(translations_path)s" || true' % env)
+        sudo('rmdir "%(translations_path)s"' % env)
     if exists('%(repos_path)s' % env):
-        sudo('rm -rf %(repos_path)s' % env)
+        run('rm -rf "%(repos_path)s" || true' % env)
+        sudo('rmdir "%(repos_path)s"' % env)
 
 
 def _init_directories():
@@ -483,9 +486,9 @@ def update_config():
 
 def _remove_config():
     """Removes server configuration files"""
-    sudo('rm -rf %(vhost_file)s' % env)
-    run('rm -rf %(wsgi_file)s' % env)
-    run('rm -rf %(project_settings_path)s/90-%(environment)s-local.conf' % env)
+    sudo('rm -f %(vhost_file)s' % env)
+    run('rm -f %(wsgi_file)s' % env)
+    run('rm -f %(project_settings_path)s/90-%(environment)s-local.conf' % env)
 
 
 def enable_site():
