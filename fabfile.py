@@ -197,10 +197,11 @@ def unstage_feature(branch=None):
     _reload_with_new_settings(branch)
 
     # Run the commands for completely removing this Pootle install
-    disable_site()
-    drop_db()
-    _remove_config()
-    _remove_directories()
+    with settings(warn_only=True):
+        disable_site()
+        drop_db()
+        _remove_config()
+        _remove_directories()
 
 
 def create_db():
