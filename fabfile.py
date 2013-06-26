@@ -220,7 +220,7 @@ def create_db():
             create_db_cmd +
             ("' || { test root = '%(db_user)s' && exit $?; " % env) +
             "echo 'Trying again, with MySQL root DB user'; " +
-            ("mysql -u root %(db_root_password_opt)s -e '" % env) +
+            ("mysql %(db_root_password_opt)s -u root -e '" % env) +
             create_db_cmd + grant_db_cmd + "';}")
 
 
@@ -255,7 +255,7 @@ def _copy_db():
             "%(temp_dump)s"
             " || { test root = '%(db_user)s' && exit $?; "
             "echo 'Trying again, with MySQL root DB user'; "
-            "mysqldump -u root %(db_root_password_opt)s %(source_db)s > "
+            "mysqldump %(db_root_password_opt)s -u root %(source_db)s > "
             "%(temp_dump)s;}" % env)
 
         print('\nLoading data into the DB...')
@@ -263,7 +263,7 @@ def _copy_db():
             "%(temp_dump)s"
             " || { test root = '%(db_user)s' && exit $?; "
             "echo 'Trying again, with MySQL root DB user'; "
-            "mysql -u root %(db_root_password_opt)s %(db_name)s < "
+            "mysql %(db_root_password_opt)s -u root %(db_name)s < "
             "%(temp_dump)s;}" % env)
 
         run('rm -f %(temp_dump)s' % env)
@@ -357,11 +357,14 @@ def load_db(dumpfile=None):
 
                 print('\nLoading data into the DB...')
 
-                with settings(hide('stderr')):
+                with settings(hide('stderr'), temp_dump = remote_filename):
                     put(dumpfile, remote_filename)
-                    run('mysql -u %s %s %s < %s' %
-                        (env['db_user'], env['db_password_opt'],
-                         env['db_name'], remote_filename))
+                    run("mysql -u %(db_user)s %(db_password_opt)s %(db_name)s "
+                        "< %(temp_dump)s"
+                        " || { test root = '%(db_user)s' && exit $?; "
+                        "echo 'Trying again, with MySQL root DB user'; "
+                        "mysql %(db_root_password_opt)s -u root %(db_name)s < "
+                        "%(temp_dump)s;}" % env)
                     run('rm %s' % (remote_filename))
             else:
                 abort('\nAborting.')
@@ -390,10 +393,13 @@ def dump_db(dumpfile="pootle_DB_backup.sql"):
 
             print('\nDumping DB...')
 
-            with settings(hide('stderr')):
-                run('mysqldump -u %s %s %s > %s' %
-                    (env['db_user'], env['db_password_opt'],
-                     env['db_name'], remote_filename))
+            with settings(hide('stderr'), temp_dump = remote_filename):
+                run("mysqldump -u %(db_user)s %(db_password_opt)s %(db_name)s "
+                    "> %(temp_dump)s"
+                    " || { test root = '%(db_user)s' && exit $?; "
+                    "echo 'Trying again, with MySQL root DB user'; "
+                    "mysqldump %(db_root_password_opt)s -u root %(db_name)s "
+                    "> %(temp_dump)s;}" % env)
                 get(remote_filename, '.')
                 run('rm %s' % (remote_filename))
         else:
