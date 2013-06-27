@@ -58,7 +58,7 @@ bzcat /var/backups/pootle_`date +%A`.sql.bz2 |
 rm -f production.sql
 
 # Copy translation files
-ssh $REMOTE "cd $REMOTE_PODIRECTORY && rm -rf *"
+ssh $REMOTE "cd $REMOTE_PODIRECTORY && sudo rm -rf POOTLE_EXPORT && rm -rf *"
 log "Copying Pootle translation files"
 scp -qpr $PODIRECTORY/* $REMOTE:$REMOTE_PODIRECTORY
 
