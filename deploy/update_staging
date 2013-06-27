@@ -63,8 +63,8 @@ log "Copying Pootle translation files"
 scp -qpr $PODIRECTORY/* $REMOTE:$REMOTE_PODIRECTORY
 
 # Copy Firefox project from moz_pootle
-log "Copying Firefox translation files"
-scp -qpr $PODIRECTORY_MOZ/firefox/ $REMOTE:$REMOTE_PODIRECTORY
+#log "Copying Firefox translation files"
+#scp -qpr $PODIRECTORY_MOZ/firefox/ $REMOTE:$REMOTE_PODIRECTORY
 
 ssh $REMOTE "cd $REMOTE_PODIRECTORY &&
   { chgrp -R www-data .; chmod -R g=u .; }"
@@ -89,7 +89,7 @@ fab staging upgrade
 #<li>Running source code from <a href='https://github.com/translate/pootle/commit/$R'>commit $R</a>.</li>
 #</ul>"
 #
-#$PYTHON - <<CONTENT
+#ssh $REMOTE "cd $SRC_DIR && source ../env/bin/activate && python -" <<CONTENT
 #import os
 #os.environ['DJANGO_SETTINGS_MODULE'] = 'pootle.settings'
 #
@@ -103,25 +103,25 @@ fab staging upgrade
 #CONTENT
 
 # Create Firefox project *after* migrating the DB
-log "Creating Firefox project "
-ssh $REMOTE "cd $SRC_DIR && source ../env/bin/activate python -" <<CONTENT
-import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'pootle.settings'
-
-from pootle import syspath_override
-from pootle_app.management import require_english
-from pootle_project.models import Project
-
-en = require_english()
-
-fx = Project(code=u"firefox", source_language=en)
-fx.fullname = u"Mozilla Firefox"
-fx.description = "Mozilla Firefox (Aurora)"
-fx.checkstyle = "mozilla"
-fx.localfiletype = "po"
-fx.treestyle = "auto"
-fx.save()
-CONTENT
+#log "Creating Firefox project "
+#ssh $REMOTE "cd $SRC_DIR && source ../env/bin/activate && python -" <<CONTENT
+#import os
+#os.environ['DJANGO_SETTINGS_MODULE'] = 'pootle.settings'
+#
+#from pootle import syspath_override
+#from pootle_app.management import require_english
+#from pootle_project.models import Project
+#
+#en = require_english()
+#
+#fx = Project(code=u"firefox", source_language=en)
+#fx.fullname = u"Mozilla Firefox"
+#fx.description = "Mozilla Firefox (Aurora)"
+#fx.checkstyle = "mozilla"
+#fx.localfiletype = "po"
+#fx.treestyle = "auto"
+#fx.save()
+#CONTENT
 
 log "Collecting static files"
 fab staging deploy_static
