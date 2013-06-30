@@ -1,17 +1,17 @@
 .PHONY: all help requirements requirements.txt
 
-all: requirements
+REQS=.reqs
+REQUIRE=../requirements.txt
+REQFILE=base.txt
+MINVERS=MINVERS.txt
+
+all: $(MINVERS) $(REQUIRE)
 
 help:
 	@echo "Help"
 	@echo "----"
 	@echo
 	@echo "  requirements - (re)generate pinned and minimum requirements"
-
-REQS=.reqs
-REQUIRE=../requirements.txt
-REQFILE=base.txt
-MINVERS=MINVERS.txt
 
 # Perform forced build using -W for the (.PHONY) requirements target
 requirements:
