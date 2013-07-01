@@ -14,6 +14,7 @@ help:
 	@echo "  requirements - (re)generate pinned and minimum requirements"
 	@echo "  test - test and check Python code for requirements"
 	@echo "  readme, html - format README.rst into README.html"
+	@echo "  clean - remove generated README files and temporary files"
 
 # Perform forced build using -W for the (.PHONY) requirements target
 requirements:
@@ -59,3 +60,12 @@ html man:
 
 README.%:: README.rst
 	rst2$*.py $< $@
+
+
+.PHONY: clean
+
+clean:
+	@if git clean -ndX | grep .; then                               \
+	   printf 'Remove these files? (y/N) '; read ANS;               \
+	   case $$ANS in [yY]*) git clean -fdX;; *) exit 1;; esac       \
+	 fi
