@@ -13,6 +13,7 @@ help:
 	@echo
 	@echo "  requirements - (re)generate pinned and minimum requirements"
 	@echo "  test - test and check Python code for requirements"
+	@echo "  readme, html - format README.rst into README.html"
 
 # Perform forced build using -W for the (.PHONY) requirements target
 requirements:
@@ -48,3 +49,13 @@ test: freeze.pyc
 
 freez%.py: freez%
 	ln -s $< $@
+
+
+.PHONY: README readme html man
+
+README readme: html
+html man:
+	@$(MAKE) README.$@
+
+README.%:: README.rst
+	rst2$*.py $< $@
